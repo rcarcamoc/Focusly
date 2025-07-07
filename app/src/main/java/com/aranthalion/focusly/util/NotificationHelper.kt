@@ -55,6 +55,22 @@ object NotificationHelper {
         ).show()
     }
     
+    fun showServiceRestartedNotification(context: Context) {
+        Toast.makeText(
+            context,
+            "Focusly se reinició automáticamente",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+    
+    fun showPermissionRequiredNotification(context: Context) {
+        Toast.makeText(
+            context,
+            "Focusly necesita permisos para funcionar correctamente",
+            Toast.LENGTH_LONG
+        ).show()
+    }
+    
     private fun formatDuration(durationMs: Long): String {
         val seconds = durationMs / 1000
         val minutes = seconds / 60

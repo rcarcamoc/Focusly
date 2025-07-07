@@ -12,6 +12,8 @@ import androidx.core.app.NotificationCompat
 import com.aranthalion.focusly.R
 import com.aranthalion.focusly.data.entity.Session
 import com.aranthalion.focusly.data.repository.SessionRepository
+import com.aranthalion.focusly.util.AppStateManager
+import com.aranthalion.focusly.util.DeviceState
 import com.aranthalion.focusly.util.NotificationHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +27,9 @@ class LockUnlockService : Service() {
     
     @Inject
     lateinit var sessionRepository: SessionRepository
+    
+    @Inject
+    lateinit var appStateManager: AppStateManager
     
     private var lockTimestamp: Long = 0
     private lateinit var lockUnlockReceiver: BroadcastReceiver
@@ -55,11 +60,18 @@ class LockUnlockService : Service() {
         NotificationHelper.createNotificationChannel(this)
         setupNotificationChannel()
         setupBroadcastReceiver()
+        
+        // Restaurar estado si es necesario
+        restoreStateIfNeeded()
     }
     
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.d("LockUnlockService onStartCommand")
         startForeground(NOTIFICATION_ID, createNotification())
+        
+        // Actualizar estado del servicio
+        appStateManager.updateServiceRunning(true)
+        
         return START_STICKY
     }
     
@@ -68,11 +80,34 @@ class LockUnlockService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("LockUnlockService onDestroy")
+        
+        // Actualizar estado del servicio
+        appStateManager.updateServiceRunning(false)
+        
         try {
             unregisterReceiver(lockUnlockReceiver)
         } catch (e: Exception) {
             Timber.e(e, "Error unregistering receiver")
         }
+    }
+    
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        Timber.w("onTaskRemoved: la app fue limpiada de recientes, programando reinicio del servicio")
+        val restartIntent = Intent(applicationContext, LockUnlockService::class.java)
+        val pendingIntent = PendingIntent.getService(
+            applicationContext,
+            1,
+            restartIntent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
+        alarmManager.setExact(
+            android.app.AlarmManager.ELAPSED_REALTIME_WAKEUP,
+            android.os.SystemClock.elapsedRealtime() + 2000L, // 2 segundos después
+            pendingIntent
+        )
+        Timber.d("Servicio programado para reinicio inmediato")
     }
     
     private fun setupNotificationChannel() {
@@ -109,6 +144,8 @@ class LockUnlockService : Service() {
                     Intent.ACTION_SCREEN_OFF -> {
                         Timber.d("Pantalla bloqueada")
                         lockTimestamp = System.currentTimeMillis()
+                        appStateManager.updateLockTimestamp(lockTimestamp)
+                        appStateManager.updateCurrentSessionStart(lockTimestamp)
                     }
                     Intent.ACTION_USER_PRESENT -> {
                         Timber.d("Usuario presente")
@@ -124,6 +161,16 @@ class LockUnlockService : Service() {
         }
         
         registerReceiver(lockUnlockReceiver, filter)
+    }
+    
+    private fun restoreStateIfNeeded() {
+        val savedState = appStateManager.restoreState()
+        
+        if (savedState.lastLockTimestamp > 0) {
+            // Hay una sesión pendiente, restaurar el timestamp
+            lockTimestamp = savedState.lastLockTimestamp
+            Timber.d("Estado restaurado: lockTimestamp = $lockTimestamp")
+        }
     }
     
     private fun handleUnlock() {

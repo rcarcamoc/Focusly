@@ -40,7 +40,7 @@
             
         <!-- Receiver para reinicio automático -->
         <receiver
-            android:name=".receiver.BootReceiver"
+            android:name=".service.BootReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
