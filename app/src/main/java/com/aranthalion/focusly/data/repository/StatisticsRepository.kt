@@ -95,6 +95,32 @@ class StatisticsRepository @Inject constructor(
         }
     }
     
+    // Métodos para gráficos (con datos simulados por ahora)
+    suspend fun getDailyChartData(days: Int = 30): ChartData {
+        return try {
+            // Datos simulados para demostración
+            val labels = (1..7).map { "Día $it" }
+            val values = listOf(15f, 25f, 10f, 30f, 20f, 35f, 18f)
+            
+            ChartData(labels, values)
+        } catch (e: Exception) {
+            Timber.e(e, "Error obteniendo datos para gráfico diario")
+            ChartData(emptyList(), emptyList())
+        }
+    }
+    
+    suspend fun getWeeklyChartData(days: Int = 30): ChartData {
+        return try {
+            val dayNames = listOf("Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb")
+            val values = listOf(12f, 18f, 22f, 15f, 25f, 30f, 20f)
+            
+            ChartData(dayNames, values)
+        } catch (e: Exception) {
+            Timber.e(e, "Error obteniendo datos para gráfico semanal")
+            ChartData(emptyList(), emptyList())
+        }
+    }
+    
     private fun getStartOfDay(timestamp: Long): Long {
         val calendar = java.util.Calendar.getInstance()
         calendar.timeInMillis = timestamp

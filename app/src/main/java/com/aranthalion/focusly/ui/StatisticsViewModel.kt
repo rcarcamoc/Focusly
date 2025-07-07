@@ -2,6 +2,7 @@ package com.aranthalion.focusly.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aranthalion.focusly.data.model.ChartData
 import com.aranthalion.focusly.data.model.StatisticsSummary
 import com.aranthalion.focusly.data.repository.StatisticsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,12 @@ class StatisticsViewModel @Inject constructor(
     private val _statisticsState = MutableStateFlow(StatisticsState())
     val statisticsState: StateFlow<StatisticsState> = _statisticsState.asStateFlow()
     
+    private val _dailyChartData = MutableStateFlow(ChartData(emptyList(), emptyList()))
+    val dailyChartData: StateFlow<ChartData> = _dailyChartData.asStateFlow()
+    
+    private val _weeklyChartData = MutableStateFlow(ChartData(emptyList(), emptyList()))
+    val weeklyChartData: StateFlow<ChartData> = _weeklyChartData.asStateFlow()
+    
     init {
         loadStatistics()
     }
@@ -30,6 +37,8 @@ class StatisticsViewModel @Inject constructor(
                 _statisticsState.value = _statisticsState.value.copy(isLoading = true)
                 
                 val summary = statisticsRepository.getStatisticsSummary()
+                val dailyChart = statisticsRepository.getDailyChartData()
+                val weeklyChart = statisticsRepository.getWeeklyChartData()
                 
                 _statisticsState.value = StatisticsState(
                     isLoading = false,
@@ -37,7 +46,10 @@ class StatisticsViewModel @Inject constructor(
                     error = null
                 )
                 
-                Timber.d("Estadísticas cargadas: $summary")
+                _dailyChartData.value = dailyChart
+                _weeklyChartData.value = weeklyChart
+                
+                Timber.d("Estadísticas y gráficos cargados")
                 
             } catch (e: Exception) {
                 Timber.e(e, "Error cargando estadísticas")

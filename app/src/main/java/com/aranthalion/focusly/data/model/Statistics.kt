@@ -40,4 +40,17 @@ data class ChartData(
     val labels: List<String>,
     val values: List<Float>,
     val colors: List<Int> = emptyList()
+)
+
+// Clases para consultas de gráficos
+data class DailyChartData(
+    val date: String,
+    val sessionCount: Int,
+    val totalDuration: Long
+)
+
+data class WeeklyChartData(
+    val dayOfWeek: String,
+    val sessionCount: Int,
+    val avgDuration: Long
 ) 

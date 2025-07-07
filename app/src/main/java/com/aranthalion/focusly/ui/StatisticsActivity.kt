@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aranthalion.focusly.ui.components.ChartComponent
+import com.aranthalion.focusly.ui.components.ChartType
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,11 +43,18 @@ class StatisticsActivity : ComponentActivity() {
 @Composable
 fun StatisticsScreen(viewModel: StatisticsViewModel) {
     val state by viewModel.statisticsState.collectAsState()
+    val dailyChartData by viewModel.dailyChartData.collectAsState()
+    val weeklyChartData by viewModel.weeklyChartData.collectAsState()
     
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 16.dp,
+                top = 80.dp // Padding superior para evitar notch y notificaciones
+            )
     ) {
         Text(
             text = "Estadísticas de Focus",
@@ -123,6 +132,23 @@ fun StatisticsScreen(viewModel: StatisticsViewModel) {
                                 "Sesiones" to "${state.summary!!.sessionsThisMonth}",
                                 "Tiempo total" to viewModel.formatDuration(state.summary!!.durationThisMonth)
                             )
+                        )
+                    }
+                    
+                    // Gráficos
+                    item {
+                        ChartComponent(
+                            title = "Tiempo por Día (Últimos 30 días)",
+                            chartData = dailyChartData,
+                            chartType = ChartType.LINE
+                        )
+                    }
+                    
+                    item {
+                        ChartComponent(
+                            title = "Promedio por Día de la Semana",
+                            chartData = weeklyChartData,
+                            chartType = ChartType.BAR
                         )
                     }
                 }
