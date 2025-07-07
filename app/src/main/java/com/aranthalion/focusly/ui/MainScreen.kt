@@ -33,7 +33,8 @@ fun MainScreen(
     onRequestBatteryPermission: () -> Unit,
     onStartService: () -> Unit,
     onStopService: () -> Unit,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onOpenStatistics: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -76,12 +77,27 @@ fun MainScreen(
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        // Refresh Button
-        Button(
-            onClick = onRefresh,
-            modifier = Modifier.fillMaxWidth()
+        // Action Buttons
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text("Actualizar")
+            Button(
+                onClick = onRefresh,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Actualizar")
+            }
+            
+            Button(
+                onClick = onOpenStatistics,
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Text("Estadísticas")
+            }
         }
     }
 }

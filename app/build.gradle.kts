@@ -81,6 +81,9 @@ dependencies {
     // HITO 7: Timber para logging
     implementation("com.jakewharton.timber:timber:5.0.1")
     
+    // HITO 9: MPAndroidChart para gráficos de estadísticas
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    
     // HITO 8: Retrofit y OkHttp para networking (post-MVP)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")

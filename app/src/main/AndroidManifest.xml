@@ -31,6 +31,12 @@
             </intent-filter>
         </activity>
         
+        <activity
+            android:name=".ui.StatisticsActivity"
+            android:exported="false"
+            android:label="Estadísticas"
+            android:theme="@style/Theme.Focusly" />
+        
         <!-- Servicio en segundo plano -->
         <service
             android:name=".service.LockUnlockService"

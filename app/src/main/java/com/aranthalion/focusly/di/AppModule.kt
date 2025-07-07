@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.aranthalion.focusly.data.FocuslyDatabase
 import com.aranthalion.focusly.data.dao.SessionDao
 import com.aranthalion.focusly.data.repository.SessionRepository
+import com.aranthalion.focusly.data.repository.StatisticsRepository
 import com.aranthalion.focusly.util.AppStateManager
 import com.aranthalion.focusly.util.PermissionManager
 import com.aranthalion.focusly.util.ServiceMonitor
@@ -56,5 +57,11 @@ object AppModule {
     @Singleton
     fun provideAppStateManager(@ApplicationContext context: Context): AppStateManager {
         return AppStateManager(context)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideStatisticsRepository(sessionDao: SessionDao): StatisticsRepository {
+        return StatisticsRepository(sessionDao)
     }
 } 
