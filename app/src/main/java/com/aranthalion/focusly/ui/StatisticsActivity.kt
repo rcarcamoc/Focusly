@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aranthalion.focusly.ui.components.ChartComponent
 import com.aranthalion.focusly.ui.components.ChartType
+import android.graphics.Color
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,6 +46,7 @@ fun StatisticsScreen(viewModel: StatisticsViewModel) {
     val state by viewModel.statisticsState.collectAsState()
     val dailyChartData by viewModel.dailyChartData.collectAsState()
     val weeklyChartData by viewModel.weeklyChartData.collectAsState()
+    val hourlyChartData by viewModel.hourlyChartData.collectAsState()
     
     Column(
         modifier = Modifier
@@ -140,7 +142,8 @@ fun StatisticsScreen(viewModel: StatisticsViewModel) {
                         ChartComponent(
                             title = "Tiempo por Día (Últimos 30 días)",
                             chartData = dailyChartData,
-                            chartType = ChartType.LINE
+                            chartType = ChartType.LINE,
+                            color = Color.parseColor("#4CAF50")
                         )
                     }
                     
@@ -148,7 +151,17 @@ fun StatisticsScreen(viewModel: StatisticsViewModel) {
                         ChartComponent(
                             title = "Promedio por Día de la Semana",
                             chartData = weeklyChartData,
-                            chartType = ChartType.BAR
+                            chartType = ChartType.BAR,
+                            color = Color.parseColor("#2196F3")
+                        )
+                    }
+                    
+                    item {
+                        ChartComponent(
+                            title = "Sesiones por Hora del Día",
+                            chartData = hourlyChartData,
+                            chartType = ChartType.BAR,
+                            color = Color.parseColor("#FF9800")
                         )
                     }
                 }

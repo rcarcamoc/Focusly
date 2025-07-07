@@ -27,6 +27,9 @@ class StatisticsViewModel @Inject constructor(
     private val _weeklyChartData = MutableStateFlow(ChartData(emptyList(), emptyList()))
     val weeklyChartData: StateFlow<ChartData> = _weeklyChartData.asStateFlow()
     
+    private val _hourlyChartData = MutableStateFlow(ChartData(emptyList(), emptyList()))
+    val hourlyChartData: StateFlow<ChartData> = _hourlyChartData.asStateFlow()
+    
     init {
         loadStatistics()
     }
@@ -39,6 +42,7 @@ class StatisticsViewModel @Inject constructor(
                 val summary = statisticsRepository.getStatisticsSummary()
                 val dailyChart = statisticsRepository.getDailyChartData()
                 val weeklyChart = statisticsRepository.getWeeklyChartData()
+                val hourlyChart = statisticsRepository.getHourlyChartData()
                 
                 _statisticsState.value = StatisticsState(
                     isLoading = false,
@@ -48,6 +52,7 @@ class StatisticsViewModel @Inject constructor(
                 
                 _dailyChartData.value = dailyChart
                 _weeklyChartData.value = weeklyChart
+                _hourlyChartData.value = hourlyChart
                 
                 Timber.d("Estadísticas y gráficos cargados")
                 

@@ -53,4 +53,9 @@ data class WeeklyChartData(
     val dayOfWeek: String,
     val sessionCount: Int,
     val avgDuration: Long
+)
+
+data class HourlyChartData(
+    val hourOfDay: String,
+    val sessionCount: Int
 ) 

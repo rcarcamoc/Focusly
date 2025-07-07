@@ -37,10 +37,13 @@ interface SessionDao {
     @Query("SELECT COUNT(*) FROM sessions WHERE startTime >= :startDate")
     suspend fun getSessionCountFromDate(startDate: Long): Int
     
-    // Consultas básicas para gráficos (simplificadas)
+    // Consultas básicas para gráficos (simplificadas para evitar problemas de Room)
     @Query("SELECT SUM(duration) FROM sessions WHERE startTime >= :startDate")
     suspend fun getTotalDurationForPeriod(startDate: Long): Long?
     
     @Query("SELECT COUNT(*) FROM sessions WHERE startTime >= :startDate")
     suspend fun getSessionCountForPeriod(startDate: Long): Int
+    
+    @Query("SELECT AVG(duration) FROM sessions WHERE startTime >= :startDate")
+    suspend fun getAverageDurationForPeriod(startDate: Long): Long?
 } 

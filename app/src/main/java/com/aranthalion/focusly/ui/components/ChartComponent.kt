@@ -27,7 +27,9 @@ fun ChartComponent(
     title: String,
     chartData: ChartData,
     chartType: ChartType = ChartType.BAR,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showValues: Boolean = true,
+    color: Int = Color.parseColor("#2196F3")
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -57,8 +59,8 @@ fun ChartComponent(
                 }
             } else {
                 when (chartType) {
-                    ChartType.BAR -> BarChartComponent(chartData = chartData)
-                    ChartType.LINE -> LineChartComponent(chartData = chartData)
+                    ChartType.BAR -> BarChartComponent(chartData = chartData, showValues = showValues, color = color)
+                    ChartType.LINE -> LineChartComponent(chartData = chartData, showValues = showValues, color = color)
                 }
             }
         }
@@ -66,7 +68,11 @@ fun ChartComponent(
 }
 
 @Composable
-fun BarChartComponent(chartData: ChartData) {
+fun BarChartComponent(
+    chartData: ChartData,
+    showValues: Boolean = true,
+    color: Int = Color.parseColor("#2196F3")
+) {
     AndroidView(
         factory = { context ->
             BarChart(context).apply {
@@ -101,8 +107,8 @@ fun BarChartComponent(chartData: ChartData) {
             }
             
             val dataSet = BarDataSet(entries, "Datos").apply {
-                color = Color.parseColor("#2196F3")
-                setDrawValues(true)
+                this.color = color
+                setDrawValues(showValues)
             }
             
             chart.data = BarData(dataSet)
@@ -115,7 +121,11 @@ fun BarChartComponent(chartData: ChartData) {
 }
 
 @Composable
-fun LineChartComponent(chartData: ChartData) {
+fun LineChartComponent(
+    chartData: ChartData,
+    showValues: Boolean = true,
+    color: Int = Color.parseColor("#4CAF50")
+) {
     AndroidView(
         factory = { context ->
             LineChart(context).apply {
@@ -150,9 +160,9 @@ fun LineChartComponent(chartData: ChartData) {
             }
             
             val dataSet = LineDataSet(entries, "Datos").apply {
-                color = Color.parseColor("#4CAF50")
+                this.color = color
                 setDrawCircles(true)
-                setDrawValues(true)
+                setDrawValues(showValues)
                 lineWidth = 2f
             }
             
